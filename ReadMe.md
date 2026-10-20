@@ -50,10 +50,10 @@ Gateway выступает одновременно в трёх ролях:
 2. Gateway, как OAuth2 Client, редиректит пользователя в Keycloak.
 3. Пользователь вводит логин/пароль, Keycloak выдаёт authorization code.
 4. Gateway обменивает код на access token и создаёт сессию.
-5. При последующих запросах Gateway, как Resource Server, валидирует JWT
-   из сессии и через `TokenRelay=` передаёт access token в FlowManager.
-6. FlowManager получает уже аутентифицированный запрос с заголовком
-   'Authorization: Bearer ...'.
+5. При последующих запросах Gateway, как Resource Server, валидирует JWT из сессии и проверяет роль ('USER' или 'ADMIN').
+6. Если роль подходит, через 'TokenRelay=' access token передаётся в FlowManager.
+7. FlowManager получает уже аутентифицированный запрос с заголовком 'Authorization: Bearer ...'.
+
 
 ## Требования к настоящему приложению:
 - JDK 17+
@@ -109,7 +109,7 @@ http://localhost:8082/api/v1/files/debug/headers
 Логин: user1 / password123.
 
 В ответе будет 'authorization: Bearer eyJ...' — доказательство,
-что Gateway провалидировал JWT и передал его в FlowManager.
+что Gateway провалидировал JWT и передал его в FlowManager через TokenRelay.
 
 'debug/headers': это диагностический эндпоинт FlowManager,
  предназначенный только для локальной проверки передачи токена
