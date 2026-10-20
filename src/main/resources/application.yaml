@@ -4,6 +4,30 @@ server:
 spring:
   application:
     name: api-gateway
+
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/microservices-realm
+        registration:
+          api-gateway-client:
+            provider: keycloak
+            client-id: api-gateway-client
+            client-secret: super-secret-key
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope:
+              - openid
+              - profile
+              - email
+              - roles
+
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/microservices-realm
+
   cloud:
     gateway:
       server:
@@ -13,6 +37,9 @@ spring:
               uri: lb://flow-manager
               predicates:
                 - Path=/api/v1/files/**
+              filters:
+                - TokenRelay=
+                - RemoveRequestHeader=Cookie
 
 eureka:
   client:
@@ -20,6 +47,8 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
     register-with-eureka: true
     fetch-registry: true
+    registry-fetch-interval-seconds: 5
+    disable-delta: true
   instance:
     prefer-ip-address: true
     lease-renewal-interval-in-seconds: 10
@@ -39,5 +68,6 @@ management:
 logging:
   level:
     org.springframework.cloud.gateway: INFO
-    org.springframework.cloud.loadbalancer: DEBUG
-    com.netflix.discovery: INFO
+    org.springframework.cloud.loadbalancer: INFO
+    com.netflix.discovery: WARN
+    org.springframework.security: INFO

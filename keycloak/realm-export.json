@@ -1,0 +1,112 @@
+{
+  "realm": "microservices-realm",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": false,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": false,
+  "accessTokenLifespan": 300,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+  "roles": {
+    "realm": [
+      { "name": "user", "description": "Обычный пользователь" },
+      { "name": "admin", "description": "Администратор" }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "api-gateway-client",
+      "name": "API Gateway",
+      "description": "API Gateway как OAuth2 клиент и Resource Server",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "super-secret-key",
+      "redirectUris": [
+        "http://localhost:8082/login/oauth2/code/api-gateway-client",
+        "http://localhost:8082docker/*"
+      ],
+      "webOrigins": ["http://localhost:8082", "+"],
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "authorizationServicesEnabled": false,
+      "fullScopeAllowed": true,
+      "attributes": {
+        "access.token.lifespan": "300"
+      },
+      "defaultClientScopes": [
+        "web-origins", "profile", "roles", "email"
+      ],
+      "optionalClientScopes": [
+        "address", "phone", "offline_access"
+      ],
+      "protocolMappers": [
+        {
+          "name": "realm roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "realm_access.roles",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "client roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-client-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "resource_access.${client_id}.roles",
+            "jsonType.label": "String"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "user1",
+      "enabled": true,
+      "email": "user1@example.com",
+      "firstName": "User",
+      "lastName": "One",
+      "credentials": [
+        { "type": "password", "value": "password123", "temporary": false }
+      ],
+      "realmRoles": ["user"],
+      "clientRoles": {
+        "api-gateway-client": ["user"]
+      }
+    },
+    {
+      "username": "admin1",
+      "enabled": true,
+      "email": "admin1@example.com",
+      "firstName": "Admin",
+      "lastName": "One",
+      "credentials": [
+        { "type": "password", "value": "admin123", "temporary": false }
+      ],
+      "realmRoles": ["admin"],
+      "clientRoles": {
+        "api-gateway-client": ["admin"]
+      }
+    }
+  ]
+}
