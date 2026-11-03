@@ -1,5 +1,7 @@
 package com.vitzemtsov.api_gateway.config;
 
+import com.vitzemtsov.api_gateway.config.constants.GatewayPaths;
+import com.vitzemtsov.api_gateway.config.constants.SecurityRoles;
 import com.vitzemtsov.api_gateway.security.KeycloakRealmRoleConverter;
 import org.jspecify.annotations.NonNull;
 import org.springframework.context.annotation.Bean;
@@ -33,8 +35,8 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers("/actuator/health", "/actuator/info", "/actuator/gateway/**").permitAll()
-                        .pathMatchers("/api/v1/files/**").hasAnyRole("USER", "ADMIN")
+                        .pathMatchers(GatewayPaths.ACTUATOR_HEALTH, GatewayPaths.ACTUATOR_INFO, GatewayPaths.ACTUATOR_GATEWAY).permitAll()
+                        .pathMatchers(GatewayPaths.FILES_ALL).hasAnyRole(SecurityRoles.USER, SecurityRoles.ADMIN)
                         .anyExchange().authenticated()
                 )
                 .oauth2Login(Customizer.withDefaults())

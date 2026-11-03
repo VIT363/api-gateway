@@ -94,31 +94,7 @@ Gateway выступает одновременно в трёх ролях:
 - Keycloak Admin: http://localhost:8080/admin (admin/admin)
 - MinIO Console: http://localhost:9001
 
-### Проверка OAuth2
-
-## Проверка 1: OAuth2 + TokenRelay (браузер)
-
-Откройте в браузере:
-
-
-http://localhost:8082/api/v1/files/debug/headers
-
-
-Вас перенаправит на страницу входа Keycloak. Введите:
-
-Логин: user1 / password123.
-
-В ответе будет 'authorization: Bearer eyJ...' — доказательство,
-что Gateway провалидировал JWT и передал его в FlowManager через TokenRelay.
-
-'debug/headers': это диагностический эндпоинт FlowManager,
- предназначенный только для локальной проверки передачи токена
- через Gateway. Он возвращает все заголовки запроса, включая
- 'Authorization'. В production такой эндпоинт нужно выключать —
- например, помечать '@Profile("dev")' или удалять.
- Здесь он оставлен активным для удобства проверки.
-
-## Проверка 2: реальный сценарий (upload - status)(PowerShell)
+## Проверка: реальный сценарий (upload - status)(PowerShell)
 
 ** Шаг 1. Создайте тестовый файл:
 

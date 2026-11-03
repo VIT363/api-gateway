@@ -15,14 +15,13 @@ spring:
           api-gateway-client:
             provider: keycloak
             client-id: api-gateway-client
-            client-secret: super-secret-key
+            client-secret: ${KEYCLOAK_CLIENT_SECRET}
             authorization-grant-type: authorization_code
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             scope:
               - openid
               - profile
               - email
-              - roles
 
       resourceserver:
         jwt:
@@ -47,8 +46,6 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
     register-with-eureka: true
     fetch-registry: true
-    registry-fetch-interval-seconds: 5
-    disable-delta: true
   instance:
     prefer-ip-address: true
     lease-renewal-interval-in-seconds: 10
